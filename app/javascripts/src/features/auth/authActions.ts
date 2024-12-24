@@ -2,7 +2,20 @@ import axios from "axios";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
 // Define the backend URL based on the environment
-const backendURL = process.env.APP_URL
+
+const getSubDomain = () => {
+  const hostname = window.location.hostname; // e.g., "galaxy.localhost"
+  const parts = hostname.split(".");
+  if (parts.length >= 2) {
+    const subdomain = parts[0];
+
+    return `http://${subdomain}.localhost:3000`; // Adjust your backend domain
+  }
+
+  //return process.env.VITE_SERVER_URL || "http://localhost:3000"; // Default backend URL
+};
+
+const backendURL = getSubDomain();
 
 // Define the types for the login and registration payloads
 interface LoginPayload {
@@ -50,7 +63,6 @@ export const userLogin = createAsyncThunk<AuthResponse, LoginPayload>(
       const config = {
         headers: getHeaders(),
       };
-
       const response = await axios.post(
         `${backendURL}/login`,
         { user: { email } },

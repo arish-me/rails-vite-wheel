@@ -10,9 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_10_30_180502) do
+ActiveRecord::Schema[7.1].define(version: 2024_12_24_111940) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "accounts", force: :cascade do |t|
+    t.string "name"
+    t.string "subdomain"
+    t.string "state"
+    t.string "city"
+    t.string "phone_number"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -122,6 +132,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_30_180502) do
     t.string "otp_secret"
     t.integer "consumed_timestep"
     t.boolean "otp_required_for_login"
+    t.integer "account_id"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["jti"], name: "index_users_on_jti", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true

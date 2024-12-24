@@ -3,7 +3,8 @@
 Rails.application.routes.draw do
   # config/routes.rb
 constraints lambda { |req| req.headers['X-Galaxy-Header'] == 'arish' } do
-  devise_for :users, path: '', path_names: {
+constraints subdomain: /.+/ do
+    devise_for :users, path: '', path_names: {
                                  sign_in: 'login',
                                  sign_out: 'logout',
                                  registration: 'signup'
@@ -49,6 +50,7 @@ constraints lambda { |req| req.headers['X-Galaxy-Header'] == 'arish' } do
       resources :organization_settings
     end
   end
+end
 end
 
   get 'up' => 'rails/health#show', as: :rails_health_check

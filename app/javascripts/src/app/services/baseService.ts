@@ -2,21 +2,34 @@ import { fetchBaseQuery, FetchArgs, BaseQueryFn } from "@reduxjs/toolkit/query/r
 import { updateToken, logout } from "@/features/auth/authSlice";
 import { RootState } from "@/store"; // Adjust the import path as necessary
 
-const baseQuery: BaseQueryFn<string | FetchArgs, unknown, { status: number; message?: string }> = fetchBaseQuery({
+// Utility function to determine the base URL dynamically
+const getSubDomain = () => {
+  const hostname = window.location.hostname; // e.g., "galaxy.localhost"
+  const parts = hostname.split(".");
 
-  baseUrl: process.env.APP_URL,
+  if (parts.length >= 2) {
+    const subdomain = parts[0]; // Extract the subdomain
+    return `http://${subdomain}.localhost:3000`; // Adjust your backend domain
+  }
+
+  return process.env.VITE_SERVER_URL || "http://localhost:3000"; // Default backend URL
+};
+
+// Define the base query with dynamic baseUrl
+const baseQuery: BaseQueryFn<string | FetchArgs, unknown, { status: number; message?: string }> = fetchBaseQuery({
+  baseUrl: getSubDomain(), // Dynamically determine baseUrl
 
   prepareHeaders: (headers, { getState }) => {
     const token = (getState() as RootState).auth.userToken; // Ensure you replace `RootState` with the correct type
     if (token) {
       headers.set("authorization", `${token}`);
-      headers.set("X-Galaxy-Header", 'arish');
+      headers.set("X-Galaxy-Header", "arish");
     }
     return headers;
   },
 });
 
-// Step 2: Enhance baseQuery with re-authentication logic
+// Enhance baseQuery with re-authentication logic
 export const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, { status: number; message?: string }> = async (args, api, extraOptions) => {
   const result = await baseQuery(args, api, extraOptions);
 

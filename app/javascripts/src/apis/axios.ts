@@ -1,13 +1,22 @@
-
-
 import axios, { AxiosRequestConfig, AxiosInstance } from "axios";
 import store from "@/app/store";
 
 const backendURL = process.env.APP_URL
 
-console.log(process.env.VITE_SERVER_URL)
+const getSubDomain = () => {
+  const hostname = window.location.hostname; // e.g., "galaxy.localhost"
+  const parts = hostname.split(".");
+
+  if (parts.length >= 2) {
+    const subdomain = parts[0]; // Extract the subdomain
+    return `http://${subdomain}.localhost:3000`; // Adjust your backend domain
+  }
+
+  return process.env.VITE_SERVER_URL || "http://localhost:3000"; // Default backend URL
+};
+
 const axiosInstance: AxiosInstance = axios.create({
-  baseURL: backendURL,
+  baseURL: getSubDomain(),
   headers: {
     "Content-Type": "application/json",
   },

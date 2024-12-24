@@ -5,9 +5,22 @@ class ApplicationController < ActionController::Base
   before_action :refresh_jwt_if_needed
   before_action :configure_permitted_parameters, if: :devise_controller?
   rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
+  before_action :set_current_account
 
   def self.session_store
     :disabled
+  end
+
+  def set_current_account
+    subdomain = request.subdomain
+    Current.account = Account.find_by(subdomain: subdomain)
+
+    # if Current.account
+    #   render json: { data: Current.account.as_json }, status: :not_found
+    # else
+    #   render json: { error: 'Account not found' }, status: :not_found if Current.account.nil? && subdomain.present?
+    # end
+    render json: { error: 'Account not found' }, status: :not_found if Current.account.nil? && subdomain.present?
   end
 
   # Global handling for unauthorized access

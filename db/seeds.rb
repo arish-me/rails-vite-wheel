@@ -23,3 +23,10 @@ MODEL_NAME.each do |name|
     RolePermission.create(role:, resource: name, action: :view)
   end
 end
+
+Account.find_or_create_by(subdomain: 'galaxy') do |account|
+  account.name = 'Galaxy'
+  account.state = 'California'
+  account.city = 'San Francisco'
+  account.phone_number = '123-456-7890'
+end

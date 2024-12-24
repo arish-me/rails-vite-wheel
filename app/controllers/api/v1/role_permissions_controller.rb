@@ -5,6 +5,8 @@ module Api
     class RolePermissionsController < BaseController
       # before_action :set_role_permission
 
+      before_action :authorize!
+
       def index
         roles = Role.excluding_super_admin.includes(:role_permissions).all
         all_resources = RolePermission.distinct.pluck(:resource) # More efficient to use `distinct.pluck`
@@ -30,6 +32,10 @@ module Api
       end
 
       private
+
+      def authorize!
+        authorize RolePermission
+      end
 
       def serialize_role(role, all_resources)
         {

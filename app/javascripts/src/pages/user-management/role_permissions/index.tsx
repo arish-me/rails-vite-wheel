@@ -11,11 +11,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Loader } from "@/components/common/loader"
+import { useNavigate } from 'react-router-dom';
 
 const RolesList = () => {
   const [roles, setRoles] = useState([]);
   const [loading, setLoading] = useState(true);
-  //const [selectedRoleId, setSelectedRoleId] = useState(null);
+  const [selectedRoleId, setSelectedRoleId] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const loadRoles = async () => {
@@ -23,7 +25,10 @@ const RolesList = () => {
         const { data } = await fetch();
         setRoles(data);
       } catch (error) {
-        console.warn(error)
+        if (error.status === 403) {
+          navigate('/not-authorized'); // Redirect to 403 page
+          return; // Stop further execution
+        }
         toast.error('Failed to load roles');
       } finally {
         setLoading(false);
@@ -58,7 +63,7 @@ const RolesList = () => {
             <h2 className="text-lg font-bold mb-4">{role.role_name}</h2>
             <Dialog>
               <DialogTrigger asChild>
-                    <Button>
+                    <Button onClick={() => setSelectedRoleId(role.id)}>
                       Manage Permissions
                     </Button>
               </DialogTrigger>

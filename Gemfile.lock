@@ -75,6 +75,8 @@ GEM
       minitest (>= 5.1)
       mutex_m
       tzinfo (~> 2.0)
+    acts_as_tenant (1.0.1)
+      rails (>= 6.0)
     addressable (2.8.7)
       public_suffix (>= 2.0.2, < 7.0)
     ast (2.4.2)
@@ -330,6 +332,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  acts_as_tenant
   bootsnap
   debug
   devise

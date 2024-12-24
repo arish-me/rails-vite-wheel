@@ -6,6 +6,7 @@ import { createColumns } from "@/components/data-table/column-def"
 import { RoleSheet } from "./role-sheet"
 import { toast } from "sonner";
 import { Loader } from "@/components/common/loader"
+import { useNavigate } from 'react-router-dom';
 
 type Role = {
   id: string;
@@ -22,6 +23,7 @@ export default function Roles() {
   const [isEditing, setIsEditing] = useState(false);
   const [isDialogOpen, setDialogOpen] = useState(false);
   const [rowSelection, setRowSelection] = useState({});
+  const navigate = useNavigate();
 
   const selectedRows = useMemo(
     () => resources.filter((_, index) => rowSelection[index]),
@@ -37,7 +39,10 @@ export default function Roles() {
       const response = await fetch();
       setResources(response.data.roles);
     } catch (error) {
-      console.warn(error)
+     if (error.status === 403) {
+        navigate('/not-authorized'); // Redirect to 403 page
+        return; // Stop further execution
+      }
       setError('Error fetching roles');
     } finally {
       setLoading(false);
@@ -74,7 +79,7 @@ export default function Roles() {
     }
   };
 
-  const handleSaveResource = () => {
+  const handleSaveResource = (newResource: Role) => {
     fetchResources();
     setIsEditing(false);
   };

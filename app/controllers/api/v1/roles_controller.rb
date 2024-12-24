@@ -7,9 +7,10 @@ module Api
       before_action :authenticate_user!
       before_action :set_role, only: %i[update]
       before_action :load_data, only: :bulk_destroy
+      before_action :authorize!
 
       def index
-        roles = Role.excluding_super_admin.includes(:role_permissions).all
+        roles = Role.excluding_super_admin
         render_json(roles:)
       end
 
@@ -39,6 +40,10 @@ module Api
 
       def load_data
         @roles = Role.where(id: params[:ids])
+      end
+
+      def authorize!
+        authorize Role
       end
 
       private

@@ -1,11 +1,12 @@
 // Categories.tsx
 import { useEffect, useState, useMemo } from 'react';
-import { fetch, bulkDelete } from '@/apis/usersApi';
+import { fetch } from '@/apis/usersApi';
 import { DataTable } from "@/components/data-table/data-table"
 import { createColumns } from "@/components/data-table/column-def"
 import { ResourceSheet } from "./resource-sheet"
 import { toast } from "sonner";
 import { Loader } from "@/components/common/loader"
+import { useNavigate } from 'react-router-dom';
 
 type User = {
   id: string;
@@ -22,6 +23,7 @@ export default function Users() {
   const [isEditing, setIsEditing] = useState(false);
   const [isDialogOpen, setDialogOpen] = useState(false);
   const [rowSelection, setRowSelection] = useState({});
+  const navigate = useNavigate();
 
   const selectedRows = useMemo(
     () => resources.filter((_, index) => rowSelection[index]),
@@ -36,9 +38,12 @@ export default function Users() {
     try {
       const response = await fetch();
       setResources(response.data);
-    } catch (err) {
-      const error = err?.response?.data?.error || 'An error occurred';
-      setError(`Error fetching users ${error}`);
+    } catch (error) {
+      if (error.status === 403) {
+        navigate('/not-authorized'); // Redirect to 403 page
+        return; // Stop further execution
+      }
+      setError('Error fetching users');
     } finally {
       setLoading(false);
     }
@@ -58,7 +63,6 @@ export default function Users() {
     if (selectedRows.length > 0) {
       try {
         const response = await bulkDelete({ ids: selectedRows.map(resource => resource.id) });
-
         await fetchResources();
         const { notice } = response.data;
         toast.success(notice);
@@ -75,7 +79,7 @@ export default function Users() {
     }
   };
 
-  const handleSaveResource = () => {
+  const handleSaveResource = (newResource: User) => {
     fetchResources();
     setIsEditing(false);
   };

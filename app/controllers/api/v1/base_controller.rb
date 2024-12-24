@@ -14,8 +14,8 @@ module Api
 
       def permissions(resource)
         {
-          can_view: policy(resource).index? || policy(resource).show?,
-          can_edit: policy(resource).edit? || policy(resource).create? || policy(resource).bulk_destroy?
+          can_view: policy(resource).index? || policy(resource).show? || policy(resource).fetch?,
+          can_edit: policy(resource).edit? || policy(resource).create? || policy(resource).bulk_destroy? || policy(resource).fetch?
         }
       end
 

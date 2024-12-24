@@ -32,9 +32,8 @@ const baseQuery: BaseQueryFn<string | FetchArgs, unknown, { status: number; mess
 // Enhance baseQuery with re-authentication logic
 export const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, { status: number; message?: string }> = async (args, api, extraOptions) => {
   const result = await baseQuery(args, api, extraOptions);
-
   // Handle token expiration or invalid token
-  if (result.error && result.error.status === 401) {
+  if (result.error && (result.error.status === 401 || result.error.status === "FETCH_ERROR")) {
     // Optionally, handle token refresh here or logout the user
     api.dispatch(logout());
   } else if (result.data && result.meta?.response?.headers) {

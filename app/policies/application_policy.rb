@@ -16,6 +16,10 @@ class ApplicationPolicy
     false
   end
 
+  def fetch?
+    false
+  end
+
   def create?
     false
   end

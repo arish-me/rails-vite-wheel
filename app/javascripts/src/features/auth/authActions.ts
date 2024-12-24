@@ -8,11 +8,9 @@ const getSubDomain = () => {
   const parts = hostname.split(".");
   if (parts.length >= 2) {
     const subdomain = parts[0];
-
     return `http://${subdomain}.localhost:3000`; // Adjust your backend domain
   }
-
-  //return process.env.VITE_SERVER_URL || "http://localhost:3000"; // Default backend URL
+  return process.env.VITE_SERVER_URL || "http://localhost:3000"; // Default backend URL
 };
 
 const backendURL = getSubDomain();

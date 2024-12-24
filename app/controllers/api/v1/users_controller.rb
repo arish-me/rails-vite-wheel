@@ -5,6 +5,7 @@ module Api
     class UsersController < BaseController
       before_action :authenticate_user!
       before_action :set_user, only: [:update]
+      before_action :authorize!, except: [:index]
 
       def index
         # Your code to fetch and render user data goes here
@@ -58,6 +59,10 @@ module Api
       def destroy; end
 
       private
+
+      def authorize!
+        authorize User
+      end
 
       def set_user
         @user = User.find(params[:id])

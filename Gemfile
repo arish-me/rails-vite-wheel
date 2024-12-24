@@ -25,6 +25,7 @@ gem 'devise-two-factor'
 gem 'dotenv', groups: %i[development test]
 gem 'image_processing'
 gem 'pundit'
+gem 'acts_as_tenant'
 # Use Redis adapter to run Action Cable in production
 # gem "redis", ">= 4.0.1"
 

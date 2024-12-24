@@ -5,7 +5,8 @@ class ApplicationController < ActionController::Base
   before_action :refresh_jwt_if_needed
   before_action :configure_permitted_parameters, if: :devise_controller?
   rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
-  before_action :set_current_account
+#  before_action :set_current_account
+  set_current_tenant_by_subdomain(:account, :subdomain)
 
   def self.session_store
     :disabled

@@ -2,6 +2,8 @@
 
 class User < ApplicationRecord
   include Devise::JWT::RevocationStrategies::JTIMatcher
+  acts_as_tenant(:account)
+
   devise :two_factor_authenticatable
   devise :registerable, :two_factor_authenticatable,
          :jwt_authenticatable,

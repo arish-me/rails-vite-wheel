@@ -114,13 +114,13 @@ export default function Roles() {
   ]);
 
   return (
-    <div className="container mx-auto py-10">
+    <div className="container mx-auto">
       {loading ? (
         <Loader/>
       ) : error ? (
         <p>{error}</p>
       ) : (
-        <DataTable<Category>
+        <DataTable<Role>
           data={resources}
           columns={columns}
           modelName="Role"

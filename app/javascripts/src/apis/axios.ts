@@ -9,10 +9,19 @@ const getSubDomain = () => {
 
   if (parts.length >= 2) {
     const subdomain = parts[0]; // Extract the subdomain
-    return `http://${subdomain}.localhost:3000`; // Adjust your backend domain
+    return domain_url(subdomain);
   }
 
-  return process.env.VITE_SERVER_URL || "http://localhost:3000"; // Default backend URL
+  return process.env.APP_URL || "http://localhost:3000"; // Default backend URL
+};
+
+const domain_url = (subdomain) => {
+  const APP_DOMAIN = process.env.APP_DOMAIN; // Ensure this environment variable is defined
+  const isDevelopment = process.env.NODE_ENV === "development";
+
+  return isDevelopment
+    ? `http://${subdomain}.${APP_DOMAIN}`
+    : `https://${subdomain}.${APP_DOMAIN}`;
 };
 
 const axiosInstance: AxiosInstance = axios.create({

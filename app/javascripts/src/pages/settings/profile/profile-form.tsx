@@ -58,12 +58,6 @@ export function ProfileForm() {
     fetchProfile();
   }, []);
 
-  // useEffect(() => {
-  //   if (profile) {
-  //     console.log("Profile state updated:", profile);
-  //   }
-  // }, [profile]);
-
   const fetchProfile = async () => {
     setLoading(true);
     try {

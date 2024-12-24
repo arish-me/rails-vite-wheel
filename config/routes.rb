@@ -40,6 +40,7 @@ constraints subdomain: /.+/ do
         delete 'bulk_destroy', on: :collection
       end
       resources :permissions, only: %i[index show create destroy update]
+      resources :accounts, only: %i[index show create destroy update]
       resources :role_permissions, only: %i[index show create destroy update]
       resources :user_roles, only: %i[index show create destroy update] do
         delete 'bulk_destroy', on: :collection

@@ -12,12 +12,14 @@ const sidebarNavItems = [
   {
     title: "Account",
     href: "/settings/account",
+  },
+  {
+    title: "Organization",
+    href: "/settings/organization",
   }
 ]
 
   return (
-
-
       <div className="overflow-hidden rounded-[0.5rem] border bg-background shadow">
         <div className="hidden space-y-6 p-10 pb-16 md:block">
         <div className="space-y-0.5">
@@ -36,7 +38,6 @@ const sidebarNavItems = [
           </div>
         </div>
       </div>
-      </div>
-
+    </div>
   );
 }

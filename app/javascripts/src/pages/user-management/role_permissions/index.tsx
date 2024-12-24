@@ -56,32 +56,52 @@ const RolesList = () => {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">Roles and Permissions</h1>
+      <h3 className="text-xl font-bold mb-6 text-gray-900 dark:text-gray-100">Roles and Permissions</h3>
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         {roles.map((role) => (
-          <div key={role.id} className="p-4 border rounded-lg shadow-md bg-white">
-            <h2 className="text-lg font-bold mb-4">{role.role_name}</h2>
+          <div
+            key={role.id}
+            className="p-4 border rounded-lg shadow-md bg-white dark:bg-gray-800 dark:border-gray-700"
+          >
+            <h2 className="text-lg font-bold mb-4 text-gray-900 dark:text-gray-100">
+              {role.role_name}
+            </h2>
             <Dialog>
               <DialogTrigger asChild>
-                    <Button onClick={() => setSelectedRoleId(role.id)}>
-                      Manage Permissions
-                    </Button>
+                <Button
+                  className="text-gray-900 dark:text-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600"
+                  onClick={() => setSelectedRoleId(role.id)}
+                >
+                  Manage Permissions
+                </Button>
               </DialogTrigger>
-              <DialogContent>
+              <DialogContent className="bg-white dark:bg-gray-900 dark:text-gray-100">
                 <DialogHeader>
-                  <DialogTitle>Manage Resources for {role.role_name}</DialogTitle>
-                  <DialogDescription>
+                  <DialogTitle className="text-gray-900 dark:text-gray-100">
+                    Manage Resources for {role.role_name}
+                  </DialogTitle>
+                  <DialogDescription className="text-gray-700 dark:text-gray-300">
                     Select the actions for each resource applicable for the role.
                   </DialogDescription>
                 </DialogHeader>
                 <div className="flex-col space-y-4">
                   {role.permissions.map((permission) => (
-                    <div key={permission.resource} className="flex items-center justify-between">
+                    <div
+                      key={permission.resource}
+                      className="flex items-center justify-between text-gray-900 dark:text-gray-100"
+                    >
                       <span className="font-medium">{permission.resource}</span>
                       <select
-                        className="ml-4 p-2 border rounded"
+                        className="ml-4 p-2 border rounded bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100"
                         defaultValue={permission.action}
-                        onChange={(e) => handleActionChange(permission?.id, role.id, permission.resource, e.target.value)}
+                        onChange={(e) =>
+                          handleActionChange(
+                            permission?.id,
+                            role.id,
+                            permission.resource,
+                            e.target.value
+                          )
+                        }
                       >
                         <option value="view">View</option>
                         <option value="edit">Edit</option>
@@ -97,6 +117,7 @@ const RolesList = () => {
       </div>
     </div>
   );
+
 };
 
 export default RolesList;

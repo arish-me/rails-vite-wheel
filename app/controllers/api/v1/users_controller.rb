@@ -13,10 +13,12 @@ module Api
         image_url = user_profile&.image_url
         profile = user_profile&.as_json&.merge(image_url:)
         permissions = current_user.role_permissions.pluck(:resource, :action).as_json
+        account = current_user.account
 
         render json: {
                  data: current_user.as_json.merge(profile:,
-                                                  permissions:),
+                                                  permissions:,
+                                                  account:),
                  isLoggedIn: current_user.present?
                },
                status: :ok

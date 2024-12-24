@@ -14,8 +14,11 @@ import Login from "@/pages/auth/Login";
 
 import { Notifications } from "@/pages/notification";
 import Dashboard from "@/pages/dashboard";
+
 import Account from "@/pages/settings/account/page";
 import Profile from "@/pages/settings/profile/page";
+import Organization from "@/pages/settings/organization_setting/page";
+
 import NotAuthorizedPage from "@/pages/public/403";
 import Category from "@/pages/categories/page";
 
@@ -38,6 +41,7 @@ const AppRoutes = () => (
       <Route path="settings" element={<SettingsLayout />}>
         <Route path="account" element={<Account />} />
         <Route path="profile" element={<Profile />} />
+        <Route path="organization" element={<Organization />} />
       </Route>
     </Route>
 

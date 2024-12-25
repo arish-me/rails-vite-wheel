@@ -14,8 +14,9 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
-import { fetch, update } from "@/apis/accountsApi"; // Update the endpoint if necessary
+import { fetch, update, upload } from "@/apis/accountsApi"; // Update the endpoint if necessary
 import { toast } from "sonner";
+import {ImageUploader} from "@/components/image-uploader"
 
 export function OrganizationForm() {
   const [organization, setOrganization] = useState(null);
@@ -90,6 +91,15 @@ export function OrganizationForm() {
           <p>Loading...</p>
         </div>
       ) : (
+        <>
+      {    <ImageUploader
+            labelText="Upload Profile Picture"
+            submitButtonText="Save Picture"
+            acceptedFormats={{ "image/png": [], "image/jpeg": [] }}
+            maxSize={2000000}
+            data={organization}
+            api={upload}
+          />}
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <FormField
@@ -143,6 +153,7 @@ export function OrganizationForm() {
             </Button>
           </form>
         </Form>
+        </>
       )}
     </>
   );

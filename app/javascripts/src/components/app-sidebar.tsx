@@ -19,6 +19,12 @@ import {
   SidebarMenuButton
 } from "@/components/ui/sidebar"
 
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/ui/avatar"
+
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   user: {
@@ -62,7 +68,7 @@ const navMain = [
     ),
   }))
   .filter((item) => item.items?.length > 0);
-
+  console.log(account)
 
   return (
     <Sidebar collapsible="icon" {...props}>
@@ -72,7 +78,9 @@ const navMain = [
             <SidebarMenuButton size="lg" asChild>
               <a href="#">
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                  <GalleryVerticalEnd className="size-4" />
+                  <Avatar className="h-8 w-8 rounded-lg">
+                    <AvatarImage src={account?.image_url} alt={account?.name} />
+                  </Avatar>
                 </div>
                 <div className="flex flex-col gap-0.5 leading-none">
                   <span className="font-semibold">{account?.name}</span>

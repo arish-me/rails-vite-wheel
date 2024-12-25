@@ -1,9 +1,14 @@
 class Account < ApplicationRecord
+  include Imagable
   # Validations
   validates :subdomain, presence: true, uniqueness: true
 
   # Callbacks
   before_update :prevent_subdomain_change
+
+  def image_url
+    image.attached? ? Rails.application.routes.url_helpers.url_for(image.variant(:medium)) : nil
+  end
 
   private
 

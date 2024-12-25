@@ -31,7 +31,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
   api,
   data,
 }) => {
-  const [preview, setPreview] = React.useState(data.image_url);
+  const [preview, setPreview] = React.useState(data?.image_url);
 
   const formSchema = z.object({
     image: z

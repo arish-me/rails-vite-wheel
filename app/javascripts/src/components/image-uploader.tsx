@@ -17,19 +17,20 @@ import {
 import { Camera } from "lucide-react"; // Ensure you have the correct import for your icon
 import { toast } from "sonner";
 
-// Define the props for the reusable component
 interface ImageUploaderProps {
   acceptedFormats?: { [key: string]: any };
   maxSize?: number; // in bytes
-  data?: any; // in bytes
+  data?: any; // existing data for the entity (e.g., organization)
   api?: (id: string, data: FormData) => Promise<any>;
+  onUploadSuccess?: (imageUrl: string) => void; // New callback prop
 }
 
 export const ImageUploader: React.FC<ImageUploaderProps> = ({
-  acceptedFormats = { "image/png": [], "image/jpg": [], "image/jpeg": [] }, // default accepted formats
-  maxSize = 1000000, // default size limit
+  acceptedFormats = { "image/png": [], "image/jpg": [], "image/jpeg": [] },
+  maxSize = 1000000,
   api,
   data,
+  onUploadSuccess,
 }) => {
   const [preview, setPreview] = React.useState(data?.image_url);
 
@@ -51,32 +52,37 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
     async (acceptedFiles: File[]) => {
       try {
         setPreview(URL.createObjectURL(acceptedFiles[0]));
-        await uploadImage(acceptedFiles[0]); // Call your API function here
+        await uploadImage(acceptedFiles[0]);
       } catch (error) {
-        console.warn(error)
+        console.warn(error);
         setPreview(null);
         form.resetField("image");
       }
     },
-    [form],
+    [form]
   );
 
-  const { getRootProps, getInputProps, fileRejections } =
-    useDropzone({
-      onDrop,
-      maxFiles: 1,
-      maxSize,
-      accept: acceptedFormats,
-    });
+  const { getRootProps, getInputProps, fileRejections } = useDropzone({
+    onDrop,
+    maxFiles: 1,
+    maxSize,
+    accept: acceptedFormats,
+  });
 
   const uploadImage = async (file: File) => {
-    // Replace with your actual API call logic
     const formData = new FormData();
     formData.append("image", file);
 
     try {
-      const response = await api(data.id, formData)
+      const response = await api(data.id, formData);
+      const uploadedImageUrl = response.data.image_url;
+
       toast.success(`${response.data.notice} 🎉`);
+
+      // Trigger the callback with the new image URL
+      if (onUploadSuccess) {
+        onUploadSuccess(uploadedImageUrl);
+      }
     } catch (error) {
       toast.error(`Error uploading image: ${error.message}`);
     }
@@ -95,16 +101,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
                   fileRejections.length !== 0 && "text-destructive"
                 }`}
               >
-                <h2 className="text-xl font-semibold tracking-tight">
-                  <span
-                    className={
-                      form.formState.errors.image || fileRejections.length !== 0
-                        ? "text-destructive"
-                        : "text-muted-foreground"
-                    }
-                  >
-                  </span>
-                </h2>
+                <h2 className="text-xl font-semibold tracking-tight"></h2>
               </FormLabel>
               <FormControl>
                 <div
@@ -118,20 +115,10 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
                       className="rounded-full object-cover border"
                     />
                     <AvatarFallback className="relative rounded-circle h-24 w-24 sm:h-32 sm:w-32 ring-4 ring-white object-cover rounded-full bg-gray-300 hover:bg-gray-500 group">
-                      <span className="group-hover:hidden"> AN </span>
                       <Camera className="absolute top-1/2 left-1/2 h-10 w-10 transform -translate-x-1/2 -translate-y-1/2 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out" aria-hidden="true" />
                     </AvatarFallback>
-                    {/* Camera Icon */}
-                    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out">
-                      <Camera className="h-10 w-10 cursor-pointer" aria-hidden="true" />
-                    </div>
                   </Avatar>
-                  <Input
-                    id="file-input" // Add an id to the input
-                    {...getInputProps()}
-                    type="file"
-                    className="hidden" // Hide the file input
-                  />
+                  <Input {...getInputProps()} type="file" className="hidden" />
                 </div>
               </FormControl>
               <FormMessage>

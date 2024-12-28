@@ -23,6 +23,8 @@ import { ModeToggle } from "@/components/mode-toggle";
 import { Notification } from "@/components/notification";
 import { useGetUserDetailsQuery } from '@/app/services/auth/authService'
 export const iframeHeight = "800px"
+import { RootState } from "@/store";
+
 
 
 export const description = "A sidebar that collapses to icons."
@@ -83,8 +85,9 @@ export default function PrivateLayout() {
 
   const location = useLocation();
   const breadcrumbs = generateBreadcrumbs(location);
+  const organization = useSelector((state: RootState) => state.organization);
 
-
+  console.log(organization, 'Private Layout')
   return (
     <SidebarProvider>
     {!userInfo ? (
@@ -98,7 +101,7 @@ export default function PrivateLayout() {
       </>
     ) : (
     <>
-    <AppSidebar user={userInfo} />
+    <AppSidebar user={userInfo} organization={organization} />
       <SidebarInset>
          <header className="flex h-16 shrink-0 items-center gap-2 px-4 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
           <div className="flex items-center gap-2">

@@ -10,6 +10,13 @@ interface UserDetails {
   // Add other relevant fields as per your API response
 }
 
+interface OrganizationDetails {
+  id: number;
+  name: string;
+  subdomain: string;
+  phone_number: string;
+}
+
 // Create a type for the query function
 type QueryFn = BaseQueryFn<string | FetchArgs, unknown, unknown>;
 
@@ -23,9 +30,15 @@ export const authApi = createApi({
         method: "GET",
       }),
     }),
+    getOrganizationDetails: build.query<OrganizationDetails, void>({
+      query: () => ({
+        url: "api/v1/accounts",
+        method: "GET",
+      }),
+    }),
   }),
 });
 
 // Export the generated hook
-export const { useGetUserDetailsQuery } = authApi;
+export const { useGetUserDetailsQuery, useGetOrganizationDetailsQuery } = authApi;
 

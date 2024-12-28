@@ -12,8 +12,8 @@ module Imagable
       attachable.variant :medium_2x, resize_to_limit: [256, 256]
     end
 
-    validates :image, content_type: ['image/png', 'image/jpeg', 'image/jpg'],
-                      max_file_size: 2.megabytes
+    # validates :image, content_type: ['image/png', 'image/jpeg', 'image/jpg'],
+    #                   max_file_size: 2.megabytes
     # validates :avatar, attached: true, on: :update
 
     before_save :anonymize_avatar_filename

@@ -32,6 +32,7 @@ interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   };
 }
 export function AppSidebar({...props }: AppSidebarProps) {
+const organization = props.organization.account
 // Utility to check permissions
 function hasPermission(permissions: string[][], resource: string): boolean {
   return permissions.some((permission) => permission[0] === resource);
@@ -58,7 +59,7 @@ const navMain = [
     },
   ];
   const { permissions } = props.user
-  const { account } = props.user
+  //const { account } = props.user
 
   const filteredNavMain = navMain
   .map((item) => ({
@@ -68,7 +69,7 @@ const navMain = [
     ),
   }))
   .filter((item) => item.items?.length > 0);
-  console.log(account)
+
 
   return (
     <Sidebar collapsible="icon" {...props}>
@@ -79,11 +80,11 @@ const navMain = [
               <a href="#">
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
                   <Avatar className="h-8 w-8 rounded-lg">
-                    <AvatarImage src={account?.image_url} alt={account?.name} />
+                    <AvatarImage src={organization?.image_url} alt={organization?.name} />
                   </Avatar>
                 </div>
                 <div className="flex flex-col gap-0.5 leading-none">
-                  <span className="font-semibold">{account?.name}</span>
+                  <span className="font-semibold">{organization?.name}</span>
                 </div>
               </a>
             </SidebarMenuButton>

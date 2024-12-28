@@ -13,13 +13,15 @@ module Api
 
       def update
         @account.update!(account_params)
-        render_message(I18n.t('successfully_updated', entity: 'Account'))
+        render_message(I18n.t('successfully_updated', entity: 'Account'), :ok, account: @account.as_json.merge(image_url: @account.image_url))
       end
 
       def upload_image
+        @account.image.detach if @account.image.attached?
         @account.image.attach(params[:image])
-        if @account.save(validate: false)
-          render_message(I18n.t('successfully_updated', entity: 'Organization Image'))
+        if @account.image.valid?
+          @account.save(validate: false)
+          render_message(I18n.t('successfully_updated', entity: 'Account'), :ok, image_url: @account.image_url)
         else
           render_error(@account.errors.full_messages.join(', '), :unprocessable_entity)
         end

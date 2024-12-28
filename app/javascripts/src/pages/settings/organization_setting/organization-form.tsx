@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,11 +17,13 @@ import {
 import { fetch, update, upload } from "@/apis/accountsApi"; // Update the endpoint if necessary
 import { toast } from "sonner";
 import {ImageUploader} from "@/components/image-uploader"
+import { updateOrganization } from "@/features/organization/organizationSlice";
 
 export function OrganizationForm() {
   const [organization, setOrganization] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const { userInfo } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
 
   const accountFormSchema = z.object({
     name: z.string().min(1, { message: "Organization name is required" }),
@@ -49,8 +51,6 @@ export function OrganizationForm() {
         const response = await fetch();
         const fetchedOrganization = response.data.account;
         setOrganization(fetchedOrganization);
-
-        // Reset form values after organization data is fetched
         form.reset({
           name: fetchedOrganization?.name || "",
           subdomain: fetchedOrganization?.subdomain || "",
@@ -65,18 +65,20 @@ export function OrganizationForm() {
     };
 
     fetchResource();
-  }, [form]);
+  }, [form, dispatch]);
 
   async function onSubmit(data) {
     setIsProcessing(true);
     try {
       const response = await update(organization.id, { account: data });
-      const { notice } = response.data;
+      const { notice, account } = response.data;
       toast.success(notice);
-      setOrganization(data); // Update organization state with new data
-      form.reset(data); // Resetting form with updated values
+      setOrganization(account);
+      dispatch(updateOrganization({account: account}));
+
+      form.reset(data);
     } catch (err) {
-      const { errors } = err.response.data;
+      const { errors } = err.response?.data;
       toast.error(errors);
     } finally {
       setIsProcessing(false);
@@ -92,14 +94,17 @@ export function OrganizationForm() {
         </div>
       ) : (
         <>
-      {    <ImageUploader
-            labelText="Upload Profile Picture"
-            submitButtonText="Save Picture"
-            acceptedFormats={{ "image/png": [], "image/jpeg": [] }}
-            maxSize={2000000}
-            data={organization}
-            api={upload}
-          />}
+        <ImageUploader
+          labelText="Upload Profile Picture"
+          submitButtonText="Save Picture"
+          acceptedFormats={{ "image/png": [], "image/jpeg": [] }}
+          maxSize={2000000}
+          data={organization}
+          api={upload}
+          onUploadSuccess={(imageUrl) => {
+            dispatch(updateOrganization({ account: { ...organization, image_url: imageUrl } }));
+          }}
+        />
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <FormField

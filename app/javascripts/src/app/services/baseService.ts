@@ -31,7 +31,7 @@ const baseQuery: BaseQueryFn<string | FetchArgs, unknown, { status: number; mess
   baseUrl: getSubDomain(), // Dynamically determine baseUrl
 
   prepareHeaders: (headers, { getState }) => {
-    const token = (getState() as RootState).auth.userToken; // Ensure you replace `RootState` with the correct type
+    const token = (getState() as RootState).auth.userToken;
     if (token) {
       headers.set("authorization", `${token}`);
       headers.set("X-Galaxy-Header", "arish");

@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import GoogleSignin from '@/components/GoogleSignin'
-import GitHubCallback from '@/components/GitHubCallback'
+import { toast } from "sonner";
 
 // Component and utility imports
 import { cn } from "@/lib/utils";
@@ -22,37 +22,15 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSeparator,
-  InputOTPSlot,
-} from "@/components/ui/input-otp";
-import { userLogin, verifyOTP } from "@/features/auth/authActions";
+import { userLogin } from "@/features/auth/authActions";
+import { OtpForm } from "./otp-form";
 
-// Interface for props
-// interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
-
-// UserAuthForm Component
 export function UserAuthForm({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   const [isLoading, setIsLoading] = useState(false);
   const [showOtpForm, setShowOtpForm] = useState(false);
-  const [otp_code, setOtpCode] = useState("");
-  const [showNotification, setShowNotification] = useState(false);
   const [isResendDisabled, setIsResendDisabled] = useState(true);
   const [timer, setTimer] = useState(30);
-  const [otpError, setOtpError] = useState("");
-
-  const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { email } = useSelector((state: any) => state.auth);
 
   // Schema validation using Zod
   const formSchema = z.object({
@@ -64,10 +42,6 @@ export function UserAuthForm({ className, ...props }: React.HTMLAttributes<HTMLD
     defaultValues: { email: "superadmin@wheel.com" },
   });
 
-  const otpForm = useForm({
-    defaultValues: { otp_code: "" },
-  });
-
   const onSubmitEmail: SubmitHandler<any> = async (values) => {
     setIsLoading(true);
     const result = await dispatch(userLogin(values));
@@ -75,39 +49,17 @@ export function UserAuthForm({ className, ...props }: React.HTMLAttributes<HTMLD
 
     if (userLogin.fulfilled.match(result)) {
       setShowOtpForm(true);
-      setShowNotification(true);
-      setTimeout(() => setShowNotification(false), 3000);
       setIsResendDisabled(true);
       setTimer(30);
       startOtpTimer();
+      const {message} = result.payload.data
+
+      toast.success(message);
     } else {
       console.error("Login failed:", result.error.message);
     }
   };
 
-  const onSubmitOtp: SubmitHandler<any> = async (values) => {
-    const data = {
-      ...values,
-      email,
-    };
-    const result = await dispatch(verifyOTP(data));
-
-    if (verifyOTP.fulfilled.match(result)) {
-      // OTP verification successful, navigate to the next page
-      navigate("/dashboard");
-    } else {
-      // Show error message when OTP is invalid
-      setOtpError("Invalid OTP. Please try again.");
-      console.error("OTP verification failed:", result.error.message);
-    }
-  };
-
-  const handleBack = () => setShowOtpForm(false);
-
-  const handleOtpChange = (value: string) => {
-    setOtpCode(value);
-    setOtpError(""); // Clear error when OTP is being changed
-  };
 
   const startOtpTimer = () => {
     const interval = setInterval(() => {
@@ -128,6 +80,7 @@ export function UserAuthForm({ className, ...props }: React.HTMLAttributes<HTMLD
     startOtpTimer();
   };
 
+
   const formVariants = {
     hidden: { x: "-100%", opacity: 0 },
     visible: { x: 0, opacity: 1 },
@@ -136,11 +89,6 @@ export function UserAuthForm({ className, ...props }: React.HTMLAttributes<HTMLD
 
   return (
     <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
-      {showNotification && (
-        <div className="absolute top-4 right-4 p-2 bg-green-500 text-white rounded-md">
-          OTP sent successfully!
-        </div>
-      )}
       <motion.div
         initial="hidden"
         animate="visible"
@@ -150,84 +98,7 @@ export function UserAuthForm({ className, ...props }: React.HTMLAttributes<HTMLD
         key={showOtpForm ? "otpForm" : "emailForm"}
       >
         {showOtpForm ? (
-          <Card>
-            <CardHeader className="space-y-1">
-              <CardTitle className="text-2xl font-bold text-center">
-                Enter OTP
-              </CardTitle>
-              <CardDescription className="text-center">
-                Please enter the OTP sent to your email
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Form {...otpForm}>
-                <form
-                  onSubmit={otpForm.handleSubmit(onSubmitOtp)}
-                  className="space-y-4"
-                >
-                  <div className="flex justify-center space-x-2">
-                    <InputOTP
-                      maxLength={6}
-                      className="justify-center"
-                      onChange={(value) => {
-                        handleOtpChange(value);
-                        otpForm.setValue("otp_code", value);
-                      }}
-                    >
-                      <InputOTPGroup>
-                        <InputOTPSlot index={0} />
-                        <InputOTPSlot index={1} />
-                        <InputOTPSlot index={2} />
-                      </InputOTPGroup>
-                      <InputOTPSeparator />
-                      <InputOTPGroup>
-                        <InputOTPSlot index={3} />
-                        <InputOTPSlot index={4} />
-                        <InputOTPSlot index={5} />
-                      </InputOTPGroup>
-                    </InputOTP>
-                  </div>
-                  {otpError && (
-                    <p className="text-center text-red-500 text-sm">{otpError}</p>
-                  )}
-                  <Button
-                    type="submit"
-                    className="w-full"
-                    disabled={otp_code.length < 6 || isLoading}
-                  >
-                    {isLoading ? (
-                      <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-                    ) : (
-                      "Submit OTP"
-                    )}
-                  </Button>
-                </form>
-              </Form>
-              <div className="flex justify-between items-center mt-4">
-                <Button
-                  type="button"
-                  variant="link"
-                  onClick={handleResendOtp}
-                  disabled={isResendDisabled}
-                >
-                  Resend OTP
-                </Button>
-                <span className="text-sm">
-                  {isResendDisabled
-                    ? `Resend in ${timer}s`
-                    : "You can now resend OTP"}
-                </span>
-              </div>
-              <Button
-                type="button"
-                variant="link"
-                onClick={handleBack}
-                className="mt-2"
-              >
-                Back
-              </Button>
-            </CardContent>
-          </Card>
+         <><OtpForm setShowOtpForm={setShowOtpForm} isResendDisabled={isResendDisabled} timer={timer} handleResendOtp={handleResendOtp}/></>
         ) : (
           <>
             <div className="flex flex-col space-y-2 text-center">

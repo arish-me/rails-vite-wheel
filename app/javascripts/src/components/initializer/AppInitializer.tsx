@@ -6,11 +6,23 @@ import { setOrganization } from "@/features/organization/organizationSlice";
 import { setPermissions } from "@/features/permissions/permissionsSlice";
 import { RootState } from "@/store";
 
+
 export function AppInitializer() {
+  const { isLoggedIn, userInfo } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
-  const { data: userDetails } = useGetUserDetailsQuery();
-  const { data: organizationDetails } = useGetOrganizationDetailsQuery();
-  const { data: permissions } = useGetPermissionsQuery();
+
+  const { data: userDetails } = useGetUserDetailsQuery(undefined, {
+    skip: !isLoggedIn,
+  });
+
+  const { data: organizationDetails, refetch: refetchOrganizationDetails } = useGetOrganizationDetailsQuery(undefined, {
+    skip: !isLoggedIn,
+  });
+
+  const { data: permissions } = useGetPermissionsQuery(undefined, {
+    skip: !isLoggedIn,
+  });
+
   useEffect(() => {
     if (userDetails) {
       dispatch(setCredentials(userDetails));
@@ -29,5 +41,5 @@ export function AppInitializer() {
     }
   }, [permissions, dispatch]);
 
-  return null; // This is just a state initializer, no UI required
+  return null;
 }

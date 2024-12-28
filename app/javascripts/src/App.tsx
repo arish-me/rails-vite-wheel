@@ -14,7 +14,7 @@ const App = () => {
   return (
     <ThemeProvider>
       <Provider store={store}>
-      <AppInitializer/>
+        <AppInitializer/>
         <BrowserRouter>
           <AppRoutes />
         </BrowserRouter>

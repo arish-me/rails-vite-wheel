@@ -25,6 +25,7 @@ Rails.application.routes.draw do
           post 'auth/:provider', to: 'social_auth#authenticate'
           resources :users, only: %i[index create update] do
             get :fetch, on: :collection
+            get :permissions, on: :collection
           end
           resources :notifications do
             collection do

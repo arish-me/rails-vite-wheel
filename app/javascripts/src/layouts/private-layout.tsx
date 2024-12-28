@@ -21,7 +21,6 @@ import { logout, setCredentials } from '@/features/auth/authSlice'
 import { useLocation, matchRoutes, Link } from "react-router-dom";
 import { ModeToggle } from "@/components/mode-toggle";
 import { Notification } from "@/components/notification";
-import { useGetUserDetailsQuery } from '@/app/services/auth/authService'
 export const iframeHeight = "800px"
 import { RootState } from "@/store";
 
@@ -34,7 +33,6 @@ const routes = [
   { path: "/settings", breadcrumb: "Settings" },
   { path: "/settings/account", breadcrumb: "Account" },
   { path: "/settings/profile", breadcrumb: "Profile" },
-  // Add other routes as necessary
 ];
 
 function generateBreadcrumbs(location) {
@@ -62,21 +60,11 @@ function generateBreadcrumbs(location) {
 
 
 export default function PrivateLayout() {
-  const { loading, isLoggedIn, userInfo } = useSelector((state) => state.auth);
-  const dispatch = useDispatch();
-  const { data, isFetching, error } = useGetUserDetailsQuery('userDetails', {
-    pollingInterval: 900000, // 15mins
-  })
+  const { isLoggedIn, userInfo } = useSelector((state) => state.auth);
+  const organization = useSelector((state: RootState) => state.organization);
+  const permissions = useSelector((state: RootState) => state.permissions.permissions);
 
-  useEffect(() => {
-    if (data){
-        dispatch(setCredentials(data))
-    }else if (error && !loading) {
-      if (error.originalStatus === 401) {
-         dispatch(logout());
-      }
-    }
-  }, [data, error, dispatch, isFetching]);
+  const isLoading = !isLoggedIn || !userInfo || !organization || permissions.permissions == undefined;
 
   if (!isLoggedIn) {
     return <Navigate to="/sigin" replace />;
@@ -85,12 +73,10 @@ export default function PrivateLayout() {
 
   const location = useLocation();
   const breadcrumbs = generateBreadcrumbs(location);
-  const organization = useSelector((state: RootState) => state.organization);
 
-  console.log(organization, 'Private Layout')
   return (
     <SidebarProvider>
-    {!userInfo ? (
+    {isLoading ? (
       <>
      <div className="flex h-screen w-full items-center justify-center">
       <div className="flex flex-col items-center space-y-4">
@@ -101,7 +87,7 @@ export default function PrivateLayout() {
       </>
     ) : (
     <>
-    <AppSidebar user={userInfo} organization={organization} />
+    <AppSidebar user={userInfo} organization={organization} permissions={permissions} />
       <SidebarInset>
          <header className="flex h-16 shrink-0 items-center gap-2 px-4 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
           <div className="flex items-center gap-2">

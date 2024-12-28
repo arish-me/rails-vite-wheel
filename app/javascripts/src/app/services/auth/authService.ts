@@ -24,15 +24,21 @@ export const authApi = createApi({
   reducerPath: "authApi",
   baseQuery: baseQueryWithReauth as QueryFn,
   endpoints: (build) => ({
-    getUserDetails: build.query<UserDetails, void>({
+    getUserDetails: build.query<string[][], void>({
       query: () => ({
         url: "api/v1/users",
         method: "GET",
       }),
     }),
-    getOrganizationDetails: build.query<OrganizationDetails, void>({
+    getOrganizationDetails: build.query<string[][], void>({
       query: () => ({
         url: "api/v1/accounts",
+        method: "GET",
+      }),
+    }),
+    getPermissions: build.query<string[][], void>({
+      query: () => ({
+        url: "api/v1/users/permissions",
         method: "GET",
       }),
     }),
@@ -40,5 +46,5 @@ export const authApi = createApi({
 });
 
 // Export the generated hook
-export const { useGetUserDetailsQuery, useGetOrganizationDetailsQuery } = authApi;
+export const { useGetUserDetailsQuery, useGetOrganizationDetailsQuery, useGetPermissionsQuery } = authApi;
 

@@ -27,12 +27,12 @@ import {
 
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
-  user: {
-    permissions: string[][]; // Permissions as an array of arrays of strings
-  };
+  permissions: string[][];
 }
 export function AppSidebar({...props }: AppSidebarProps) {
 const organization = props.organization.account
+const permissions = props.permissions.permissions
+
 // Utility to check permissions
 function hasPermission(permissions: string[][], resource: string): boolean {
   return permissions.some((permission) => permission[0] === resource);
@@ -58,7 +58,7 @@ const navMain = [
       ],
     },
   ];
-  const { permissions } = props.user
+
   //const { account } = props.user
 
   const filteredNavMain = navMain

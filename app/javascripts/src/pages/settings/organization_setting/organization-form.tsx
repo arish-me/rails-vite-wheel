@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -22,7 +22,6 @@ import { updateOrganization } from "@/features/organization/organizationSlice";
 export function OrganizationForm() {
   const [organization, setOrganization] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
-  const { userInfo } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
   const accountFormSchema = z.object({
@@ -78,7 +77,7 @@ export function OrganizationForm() {
 
       form.reset(data);
     } catch (err) {
-      const { errors } = err.response?.data;
+      const { errors } = err?.response?.data;
       toast.error(errors);
     } finally {
       setIsProcessing(false);

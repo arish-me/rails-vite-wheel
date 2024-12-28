@@ -5,25 +5,24 @@ module Api
     class UsersController < BaseController
       before_action :authenticate_user!
       before_action :set_user, only: [:update]
-      before_action :authorize!, except: [:index]
+      before_action :authorize!, except: [:index, :permissions]
 
       def index
         # Your code to fetch and render user data goes here
         user_profile = current_user&.profile
         image_url = user_profile&.image_url
         profile = user_profile&.as_json&.merge(image_url:)
-        permissions = current_user.role_permissions.pluck(:resource, :action).as_json
-        current_account = current_user.account
-        acount_image = current_account&.image_url
-        account = current_account.as_json.merge(image_url: acount_image)
-
         render json: {
-                 data: current_user.as_json.merge(profile:,
-                                                  permissions:,
-                                                  account:),
+                 data: current_user.as_json.merge(profile:),
+                 new: true,
                  isLoggedIn: current_user.present?
                },
                status: :ok
+      end
+
+      def permissions
+        permissions = current_user.role_permissions.pluck(:resource, :action).as_json
+        render_json(permissions:)
       end
 
       def create; end

@@ -7,13 +7,16 @@ module Api
       before_action :set_account, only: %i[index update upload_image]
       def index
         render_json(
-          account: @account.as_json.merge(image_url: @account.image_url),
+          account: @account.as_json.merge(image_url: @account.image_url)
         )
       end
 
       def update
         @account.update!(account_params)
-        render_message(I18n.t('successfully_updated', entity: 'Account'), :ok, account: @account.as_json.merge(image_url: @account.image_url))
+        render_message(
+          I18n.t('successfully_updated', entity: 'Account'), :ok,
+          account: @account.as_json.merge(image_url: @account.image_url)
+        )
       end
 
       def upload_image

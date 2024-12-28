@@ -3,6 +3,7 @@ import authReducer from "../features/auth/authSlice";
 import { authApi } from "./services/auth/authService";
 import organizationReducer from "@/features/organization/organizationSlice";
 import authMiddleware from "@/middleware/authMiddleware";
+import permissionsReducer from "@/features/permissions/permissionsSlice";
 
 // Define the type of the store's state
 export type RootState = ReturnType<typeof store.getState>;
@@ -15,6 +16,7 @@ const store = configureStore({
   reducer: {
     auth: authReducer,
     organization: organizationReducer,
+    permissions: permissionsReducer,
     [authApi.reducerPath]: authApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>

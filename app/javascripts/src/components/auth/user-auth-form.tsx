@@ -61,7 +61,7 @@ export function UserAuthForm({ className, ...props }: React.HTMLAttributes<HTMLD
 
   const form = useForm({
     resolver: zodResolver(formSchema),
-    defaultValues: { email: "" },
+    defaultValues: { email: "superadmin@wheel.com" },
   });
 
   const otpForm = useForm({

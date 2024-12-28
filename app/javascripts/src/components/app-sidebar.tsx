@@ -19,6 +19,8 @@ import {
   SidebarMenuButton
 } from "@/components/ui/sidebar"
 
+import { Link } from "react-router-dom";
+
 import {
   Avatar,
   AvatarFallback,
@@ -77,7 +79,7 @@ const navMain = [
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
-              <a href="#">
+              <Link to="/dashboard">
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
                   <Avatar className="h-8 w-8 rounded-lg">
                     <AvatarImage src={organization?.image_url} alt={organization?.name} />
@@ -86,7 +88,7 @@ const navMain = [
                 <div className="flex flex-col gap-0.5 leading-none">
                   <span className="font-semibold">{organization?.name}</span>
                 </div>
-              </a>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

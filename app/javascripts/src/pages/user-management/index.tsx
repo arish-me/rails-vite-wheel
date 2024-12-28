@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate, useLocation, Outlet } from 'react-router-dom';
 import { Separator } from "@/components/ui/separator";
+import { useSelector } from 'react-redux'
 
 import {
   Tabs,
@@ -10,15 +11,24 @@ import {
 } from "@/components/ui/tabs";
 
 const TABS = [
-  { value: "users", title: "Users", path: "/user-management/users" },
-  { value: "roles", title: "Roles", path: "/user-management/roles" },
-  { value: "role-permissions", title: "Role Permissions", path: "/user-management/role-permissions" },
+  { permission: 'User', value: "users", title: "Users", path: "/user-management/users" },
+  { permission: 'Role', value: "roles", title: "Roles", path: "/user-management/roles" },
+  { permission: 'RolePermission', value: "role-permissions", title: "Role Permissions", path: "/user-management/role-permissions" },
 ];
 
 export default function UserManagementLayout() {
   const navigate = useNavigate();
   const location = useLocation();
+  const permissions = useSelector((state) => state.permissions.permissions);
+  const hasPermission = (userPermissions, requiredPermission) => {
+    return userPermissions.some(([resource]) => resource === requiredPermission);
+  };
 
+  // Filter tabs based on permissions
+  const filteredTabs = TABS.filter((tab) =>
+    hasPermission(permissions.permissions, tab.permission)
+  );
+  console.log(filteredTabs)
   // Determine the active tab based on the current path
   const activeTab = TABS.find(tab => tab.path === location.pathname)?.value || "users";
   // Handle tab click to navigate
@@ -46,8 +56,8 @@ export default function UserManagementLayout() {
           <div className="flex flex-col space-y-8 lg:flex-row lg:space-x-12 lg:space-y-0">
             <div className="flex-1">
               <Tabs defaultValue={activeTab}>
-                <TabsList className={`grid w-full grid-cols-3 gap-4`}>
-                  {TABS.map(tab => (
+                <TabsList className={`grid w-full grid-cols-${filteredTabs.length} gap-${filteredTabs.length}`}>
+                  {filteredTabs.map(tab => (
                     <TabsTrigger
                       key={tab.value}
                       value={tab.value}
